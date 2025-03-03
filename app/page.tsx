@@ -11,7 +11,7 @@ export default function Page() {
   const [message, setMessage] = useState('');
 
   // Handle email submission
-  const handleEmailSubmit = async (event) => {
+  const handleEmailSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     try {
