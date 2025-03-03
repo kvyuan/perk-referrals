@@ -44,7 +44,7 @@ export default function Page() {
             onClick={() => setShowForm(true)} 
             className="bg-[#E31837] text-white px-6 py-3 rounded-lg text-lg font-semibold shadow-md hover:bg-[#B81B29] transition"
           >
-            "Yes, I am Interested"
+            Yes, I am Interested
           </button>
           <button 
             onClick={() => setShowExplanation(!showExplanation)} // Toggle the explanation visibility
