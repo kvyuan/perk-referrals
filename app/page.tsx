@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react';
-import Link from 'next/link';
+//import Link from 'next/link';
 import axios from 'axios';
 
 export default function Page() {
@@ -20,6 +20,7 @@ export default function Page() {
 
       // Handle success
       setMessage('Email submitted successfully!');
+      console.log(response)
       setEmail('');  // Clear the email input field
     } catch (error) {
       const errorMessage = error.response?.data?.message || 'An unexpected error occurred.';
@@ -43,7 +44,7 @@ export default function Page() {
             onClick={() => setShowForm(true)} 
             className="bg-[#E31837] text-white px-6 py-3 rounded-lg text-lg font-semibold shadow-md hover:bg-[#B81B29] transition"
           >
-            Yes, I'm Interested
+            "Yes, I am Interested"
           </button>
           <button 
             onClick={() => setShowExplanation(!showExplanation)} // Toggle the explanation visibility
@@ -82,8 +83,8 @@ export default function Page() {
             <h3 className="text-2xl font-semibold text-[#F2F2F2] mb-4">How It Works:</h3>
             <p className="text-lg text-gray-300">
               Finding a reliable local vendor or service provider should be easy! You can find trusted professionals including home services, mortgage brokers, financial planners, etc. through our forum, based on reviews and recommendations 
-              from other users. If you have a professional you trust, you’ll earn rewards by sharing here. 
-               It's a community-driven platform aimed at connecting you with the best professionals.
+              from other users. If you have a professional you trust, you will ll earn rewards by sharing here. 
+               Perk Referrals is a community-driven platform aimed at connecting you with the best professionals.
             </p>
             <p className="text-lg text-gray-300">
               Each month, your profile score will be calculated by the popularity and quality of the recommendations you make. 
