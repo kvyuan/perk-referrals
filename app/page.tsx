@@ -1,101 +1,97 @@
-import Image from "next/image";
+'use client'
 
-export default function Home() {
+import { useState } from 'react';
+import Link from 'next/link';
+import axios from 'axios';
+
+export default function Page() {
+  const [showForm, setShowForm] = useState(false);
+  const [showExplanation, setShowExplanation] = useState(false); // New state for toggling explanation
+  const [email, setEmail] = useState('');
+  const [message, setMessage] = useState('');
+
+  // Handle email submission
+  const handleEmailSubmit = async (event) => {
+    event.preventDefault();
+
+    try {
+      // POST the email to Google Apps Script Web App URL
+      const response = await axios.post('/api/submit-email', { email });
+
+      // Handle success
+      setMessage('Email submitted successfully!');
+      setEmail('');  // Clear the email input field
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || 'An unexpected error occurred.';
+      setMessage(errorMessage);
+      console.error('Submission error:', errorMessage);
+    }
+  };
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <div className="flex min-h-screen items-center justify-center bg-[#0A2342] p-6">
+      <div className="max-w-2xl text-center bg-[#112D4E] p-10 rounded-2xl shadow-lg text-white border border-gray-700">
+        <h1 className="text-4xl font-bold text-[#F2F2F2] mb-4">Perk Referrals: Share Your Experience & Get Rewarded!</h1>
+        <p className="text-lg text-gray-300 mb-6">
+          Have you recently hired a vendor or service professional? Join our forum and share your review to earn exclusive rewards!
+        </p>
+        <p className="text-lg text-gray-300 mb-6">
+          Are you in search of a vendor or service professional? Join our forum and find trusted professionals recommended by peers!
+        </p>
+        <div className="flex justify-center gap-4">
+          <button 
+            onClick={() => setShowForm(true)} 
+            className="bg-[#E31837] text-white px-6 py-3 rounded-lg text-lg font-semibold shadow-md hover:bg-[#B81B29] transition"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            Yes, I'm Interested
+          </button>
+          <button 
+            onClick={() => setShowExplanation(!showExplanation)} // Toggle the explanation visibility
+            className="bg-[#6C757D] text-white px-6 py-3 rounded-lg text-lg font-semibold shadow-md hover:bg-[#5A6268] transition"
           >
-            Read our docs
-          </a>
+            Tell Me More
+          </button>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+        
+        {showForm && (
+          <div className="mt-6 p-4 bg-[#0A2342] rounded-lg border border-gray-600">
+            <p className="text-lg text-gray-300 mb-2">Enter your email to receive Beta release announcement:</p>
+            <form onSubmit={handleEmailSubmit}>
+              <input 
+                type="email" 
+                placeholder="Your Email" 
+                className="w-full p-2 rounded-lg text-white mb-2"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+              <button 
+                type="submit"
+                className="w-full bg-[#E31837] text-white px-4 py-2 rounded-lg shadow-md hover:bg-[#B81B29] transition"
+              >
+                Submit
+              </button>
+            </form>
+            {message && <p className="mt-4 text-lg text-gray-300">{message}</p>}
+          </div>
+        )}
+
+        {/* Explanation text box */}
+        {showExplanation && (
+          <div className="mt-6 p-4 bg-[#0A2342] rounded-lg border border-gray-600">
+            <h3 className="text-2xl font-semibold text-[#F2F2F2] mb-4">How It Works:</h3>
+            <p className="text-lg text-gray-300">
+              Finding a reliable local vendor or service provider should be easy! You can find trusted professionals including home services, mortgage brokers, financial planners, etc. through our forum, based on reviews and recommendations 
+              from other users. If you have a professional you trust, you’ll earn rewards by sharing here. 
+               It's a community-driven platform aimed at connecting you with the best professionals.
+            </p>
+            <p className="text-lg text-gray-300">
+              Each month, your profile score will be calculated by the popularity and quality of the recommendations you make. 
+              Your score will then be compared with your peers, determining your share of the reward pool!
+            </p>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
