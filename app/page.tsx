@@ -1,98 +1,163 @@
-'use client'
+"use client";
 
-import { useState } from 'react';
-//import Link from 'next/link';
-import axios from 'axios';
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import axios from "axios";
 
-export default function Page() {
-  const [showForm, setShowForm] = useState(false);
-  const [showExplanation, setShowExplanation] = useState(false); // New state for toggling explanation
-  const [email, setEmail] = useState('');
-  const [message, setMessage] = useState('');
+export default function HomePage() {
+  const [showPopup, setShowPopup] = useState(false);
+  const [email, setEmail] = useState("");
+  const [category, setCategory] = useState("");
+  const [content, setContent] = useState("");
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [body, setBody] = useState([]);
+  const [header, setHeader] = useState([]);
+  const [selectedContent, setSelectedContent] = useState(null); // Track selected content
 
-  // Handle email submission
-  const handleEmailSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  // Fetch data from Google Sheets API
+  const fetchData = async () => {
+    try {
+      const response = await axios.get('/api/sheet-data');
+      setHeader(response.data.header); // Assuming header comes in response.data.header
+      setBody(response.data.body); // Assuming data comes in response.data.body
+    } catch (error) {
+      console.error("Error fetching data", error);
+    }
+  };
+
+  // Fetch data on component mount
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const handleRowClick = (row) => {
+    setSelectedContent(row.content); // Store the content for the selected row
+  };
+
+  // Handle content submission
+  const handleContentSubmit = async (event) => {
     event.preventDefault();
+    setMessage("");
+    setError("");
+    setIsSubmitting(true);
 
     try {
-      // POST the email to Google Apps Script Web App URL
-      const response = await axios.post('/api/submit-email', { email });
+      await axios.post("/api/send-submission", { email, category, content });
+      setMessage("Your content has been submitted successfully.");
+      setEmail("");
+      setCategory("");
+      setContent("");
 
-      // Handle success
-      setMessage('Email submitted successfully!');
-      console.log(response)
-      setEmail('');  // Clear the email input field
+      setTimeout(() => {
+        setMessage("");
+      }, 5000);
     } catch (error) {
-      const errorMessage = error.response?.data?.message || 'An unexpected error occurred.';
-      setMessage(errorMessage);
-      console.error('Submission error:', errorMessage);
+      setError("Failed to submit content. Please try again.");
+      setTimeout(() => {
+        setError("");
+      }, 5000);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#0A2342] p-6">
-      <div className="max-w-2xl text-center bg-[#112D4E] p-10 rounded-2xl shadow-lg text-white border border-gray-700">
-        <h1 className="text-4xl font-bold text-[#F2F2F2] mb-4">Perk Referrals: Share Your Experience & Get Rewarded!</h1>
-        <p className="text-lg text-gray-300 mb-6">
-          Have you recently hired a vendor or service professional? Join our forum and share your review to earn exclusive rewards!
-        </p>
-        <p className="text-lg text-gray-300 mb-6">
-          Are you in search of a vendor or service professional? Join our forum and find trusted professionals recommended by peers!
-        </p>
-        <div className="flex justify-center gap-4">
-          <button 
-            onClick={() => setShowForm(true)} 
-            className="bg-[#E31837] text-white px-6 py-3 rounded-lg text-lg font-semibold shadow-md hover:bg-[#B81B29] transition"
-          >
-            Yes, I am Interested
-          </button>
-          <button 
-            onClick={() => setShowExplanation(!showExplanation)} // Toggle the explanation visibility
-            className="bg-[#6C757D] text-white px-6 py-3 rounded-lg text-lg font-semibold shadow-md hover:bg-[#5A6268] transition"
-          >
-            Tell Me More
-          </button>
+    <div className="flex flex-col min-h-screen bg-[#0A2342] text-white">
+      {/* Navigation Bar */}
+      <nav className="bg-[#112D4E] p-4 shadow-md">
+        <div className="container mx-auto flex justify-between items-center">
+          <h1 className="text-2xl font-bold text-[#F2F2F2]">Perk Referrals</h1>
+          <div className="space-x-6">
+            <Link href="/" className="text-lg hover:text-gray-300 transition">
+              Home
+            </Link>
+            <Link href="/about" className="text-lg hover:text-gray-300 transition">
+              About
+            </Link>
+            <Link href="/contact" className="text-lg hover:text-gray-300 transition">
+              Contact Us
+            </Link>
+            <button
+              onClick={() => setShowPopup(true)}
+              className="bg-[#E31837] px-4 py-2 rounded-lg text-lg font-semibold shadow-md hover:bg-[#B81B29] transition"
+            >
+              POST CONTENT
+            </button>
+          </div>
         </div>
-        
-        {showForm && (
-          <div className="mt-6 p-4 bg-[#0A2342] rounded-lg border border-gray-600">
-            <p className="text-lg text-gray-300 mb-2">Enter your email to receive Beta release announcement:</p>
-            <form onSubmit={handleEmailSubmit}>
-              <input 
-                type="email" 
-                placeholder="Your Email" 
-                className="w-full p-2 rounded-lg text-white mb-2"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-              <button 
-                type="submit"
-                className="w-full bg-[#E31837] text-white px-4 py-2 rounded-lg shadow-md hover:bg-[#B81B29] transition"
-              >
-                Submit
-              </button>
-            </form>
-            {message && <p className="mt-4 text-lg text-gray-300">{message}</p>}
-          </div>
-        )}
+      </nav>
 
-        {/* Explanation text box */}
-        {showExplanation && (
-          <div className="mt-6 p-4 bg-[#0A2342] rounded-lg border border-gray-600">
-            <h3 className="text-2xl font-semibold text-[#F2F2F2] mb-4">How It Works:</h3>
-            <p className="text-lg text-gray-300">
-              Finding a reliable local vendor or service provider should be easy! You can find trusted professionals including home services, mortgage brokers, financial planners, etc. through our forum, based on reviews and recommendations 
-              from other users. If you have a professional you trust, you will ll earn rewards by sharing here. 
-               Perk Referrals is a community-driven platform aimed at connecting you with the best professionals.
-            </p>
-            <p className="text-lg text-gray-300">
-              Each month, your profile score will be calculated by the popularity and quality of the recommendations you make. 
-              Your score will then be compared with your peers, determining your share of the reward pool!
-            </p>
+      {/* Hero Section */}
+      <header className="flex flex-col items-center text-center py-16 px-6">
+        <h2 className="text-5xl font-bold text-[#F2F2F2] mb-4">Welcome to Perk Referrals Community!</h2>
+        <p className="text-lg text-gray-300 max-w-3xl">
+          A community-driven forum where members share recommendations and experiences with trusted vendors and service professionals.
+          Earn rewards for your contributions and discover highly-rated professionals recommended by peers.
+        </p>
+      </header>
+
+      {/* Features Section */}
+      <section className="container mx-auto px-6 py-10 grid md:grid-cols-2 gap-8">
+        <div className="bg-[#112D4E] p-6 rounded-xl shadow-md border border-gray-700">
+          <h3 className="text-2xl font-semibold text-[#F2F2F2]">💬 Engage with the Community</h3>
+          <p className="text-lg text-gray-300 mt-2">
+            Join discussions, ask for recommendations, and find trusted professionals based on real experiences.
+          </p>
+        </div>
+        <div className="bg-[#112D4E] p-6 rounded-xl shadow-md border border-gray-700">
+          <h3 className="text-2xl font-semibold text-[#F2F2F2]">🏆 Earn Rewards</h3>
+          <p className="text-lg text-gray-300 mt-2">
+            Share your experiences and receive rewards based on the quality and popularity of your recommendations.
+          </p>
+        </div>
+      </section>
+
+      {/* Data Table Section */}
+      <section className="container mx-auto px-6 py-10">
+        <h3 className="text-2xl font-semibold text-[#F2F2F2] mb-4">Submitted Content</h3>
+        <table className="min-w-full table-auto text-[#F2F2F2]">
+          <thead>
+            <tr>
+              {header.map((column, index) => (
+                // Show all columns except "Content"
+                column !== 'content' && (
+                  <th key={index} className="px-4 py-2">{column}</th>
+                )
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {body.map((row, index) => (
+              <tr
+                key={index}
+                onClick={() => handleRowClick(row)}
+                className="cursor-pointer hover:bg-[#112D4E] transition"
+              >
+                {Object.keys(row).map((key, i) => (
+                  // Exclude the "content" column from the table
+                  key !== 'content' && (
+                    <td key={i} className="px-4 py-2">{row[key]}</td>
+                  )
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        {selectedContent && (
+          <div className="mt-10 bg-[#112D4E] p-6 rounded-xl shadow-md border border-gray-700">
+            <h3 className="text-2xl font-semibold text-[#F2F2F2]">Content Details</h3>
+            <p className="text-lg text-gray-300 mt-2">{selectedContent}</p>
           </div>
         )}
-      </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-[#112D4E] text-center py-6 mt-auto">
+        <p className="text-gray-400">&copy; {new Date().getFullYear()} Perk Referrals. All rights reserved.</p>
+      </footer>
     </div>
   );
 }
