@@ -15,6 +15,7 @@ export default function HomePage() {
   const [body, setBody] = useState([]);
   const [header, setHeader] = useState([]);
   const [selectedContent, setSelectedContent] = useState(null); // Track selected content
+  const [selectedTitle, setSelectedTitle] = useState(null);
 
   // Fetch data from Google Sheets API
   const fetchData = async () => {
@@ -33,7 +34,8 @@ export default function HomePage() {
   }, []);
 
   const handleRowClick = (row) => {
-    setSelectedContent(row.content); // Store the content for the selected row
+    setSelectedContent(row.content);
+    setSelectedTitle(row.title); // Store the content and title for the selected row
   };
 
   // Handle content submission
@@ -117,12 +119,12 @@ export default function HomePage() {
       {/* Data Table Section */}
       <section className="container mx-auto px-6 py-10">
         <h3 className="text-2xl font-semibold text-[#F2F2F2] mb-4">Submitted Content</h3>
-        <table className="min-w-full table-auto text-[#F2F2F2]">
+        <table className="min-w-full table-auto text-[#F2F2F2] text-left">
           <thead>
             <tr>
               {header.map((column, index) => (
                 // Show all columns except "Content"
-                column !== 'content' && (
+                column !== 'Content' && (
                   <th key={index} className="px-4 py-2">{column}</th>
                 )
               ))}
@@ -148,7 +150,7 @@ export default function HomePage() {
 
         {selectedContent && (
           <div className="mt-10 bg-[#112D4E] p-6 rounded-xl shadow-md border border-gray-700">
-            <h3 className="text-2xl font-semibold text-[#F2F2F2]">Content Details</h3>
+            <h3 className="text-2xl font-semibold text-[#F2F2F2]">{selectedTitle}</h3>
             <p className="text-lg text-gray-300 mt-2">{selectedContent}</p>
           </div>
         )}
