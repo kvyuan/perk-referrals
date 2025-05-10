@@ -10,10 +10,10 @@ export default function HomePage() {
   const [title, setTitle] = useState<string>("");
   const [content, setContent] = useState<string>("");
   const [message, setMessage] = useState<string>("");
-  const [error, setError] = useState<string>("");
+  const [setError] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [showPopup, setShowPopup] = useState<boolean>(false);
-  
+
   const [body, setBody] = useState<Row[]>([]);
   const [header, setHeader] = useState([]);
   const [selectedContent, setSelectedContent] = useState<string | null>(null); 
