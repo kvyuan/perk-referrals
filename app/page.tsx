@@ -17,7 +17,7 @@ export default function HomePage() {
   const [header, setHeader] = useState([]);
   const [selectedContent, setSelectedContent] = useState<string | null>(null); 
   const [selectedTitle, setSelectedTitle] = useState<string | null>(null);
-  const [selectedCategories, setSelectedCategories] = useState([]); // Track selected categories
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [categories, setCategories] = useState<string[]>([]); // Track available categories
 
   type Row = {
@@ -99,7 +99,7 @@ export default function HomePage() {
   );
 
   // Handle category checkbox changes
-  const handleCategoryChange = (event) => {
+  const handleCategoryChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const category = event.target.value;
     setSelectedCategories((prevSelected) =>
       prevSelected.includes(category)
