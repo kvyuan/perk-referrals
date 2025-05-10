@@ -72,6 +72,7 @@ export default function HomePage() {
       setMessage(""); // Clear message after closing modal
     }, 5000);
   } catch (error) {
+    console.error("Error", error);
     setError("Failed to submit content. Please try again.");
     
     setTimeout(() => {
