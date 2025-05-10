@@ -20,21 +20,29 @@ export default function HomePage() {
   const [selectedCategories, setSelectedCategories] = useState([]); // Track selected categories
   const [categories, setCategories] = useState([]); // Track available categories
 
+  type Row = {
+  category: string;
+  // Add other fields as needed, like: id: number; name: string;
+  };
+
   // Fetch data from Google Sheets API
   const fetchData = async () => {
     try {
       const response = await axios.get('/api/sheet-data');
-      setHeader(response.data.header); // Assuming header comes in response.data.header
-      setBody(response.data.body); // Assuming data comes in response.data.body
 
-      // Extract unique categories from the data
+      // Assume response.data.body is Row[]
+      const body: Row[] = response.data.body;
+
+      setHeader(response.data.header);
+      setBody(body);
+
       const uniqueCategories = [
-        ...new Set(response.data.body.map((row) => row.category))
+        ...new Set(body.map((row: Row) => row.category))
       ];
       setCategories(uniqueCategories);
     } catch (error) {
       console.error("Error fetching data", error);
-    }
+      }
   };
 
   // Fetch data on component mount
