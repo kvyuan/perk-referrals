@@ -1,8 +1,12 @@
 import { Resend } from 'resend';
+import type { NextApiRequest, NextApiResponse } from 'next';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-export default async function handler(req, res) {
+export default async function handler(
+  req: NextApiRequest, 
+  res: NextApiResponse
+  ) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
@@ -14,7 +18,7 @@ export default async function handler(req, res) {
       from: 'onboarding@resend.dev',
       to: 'kenny.hyuan@gmail.com', // Change to your email
       subject: `New Post Submission: ${category}`,
-      text: `Email: ${email}\nCategory: ${category}\nTitile: ${title}\nContent: ${content}`,
+      text: `Email: ${email}\nCategory: ${category}\nTitle: ${title}\nContent: ${content}`,
     });
 
     res.status(200).json({ message: 'Post submitted successfully!' });
