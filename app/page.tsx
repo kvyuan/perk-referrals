@@ -15,8 +15,8 @@ export default function HomePage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [body, setBody] = useState<Row[]>([]);
   const [header, setHeader] = useState([]);
-  const [selectedContent, setSelectedContent] = useState(null); // Track selected content
-  const [selectedTitle, setSelectedTitle] = useState(null);
+  const [selectedContent, setSelectedContent] = useState<string | null>(null); 
+  const [selectedTitle, setSelectedTitle] = useState<string | null>(null);
   const [selectedCategories, setSelectedCategories] = useState([]); // Track selected categories
   const [categories, setCategories] = useState<string[]>([]); // Track available categories
 
