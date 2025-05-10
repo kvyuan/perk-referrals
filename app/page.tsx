@@ -5,12 +5,20 @@ import Link from "next/link";
 import axios from "axios";
 
 export default function HomePage() {
+
+  type Row = {
+    category: string;
+    title: string;
+    content: string;
+    // Add other fields as needed, like: id: number; name: string;
+  };
+
   const [email, setEmail] = useState<string>("");
   const [category, setCategory] = useState<string>("");
   const [title, setTitle] = useState<string>("");
   const [content, setContent] = useState<string>("");
   const [message, setMessage] = useState<string>("");
-  const [setError] = useState<string>("");
+  const [error, setError] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [showPopup, setShowPopup] = useState<boolean>(false);
 
@@ -21,12 +29,7 @@ export default function HomePage() {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [categories, setCategories] = useState<string[]>([]); // Track available categories
 
-  type Row = {
-  category: string;
-  title: string;
-  content: string;
-  // Add other fields as needed, like: id: number; name: string;
-  };
+
 
   // Fetch data from Google Sheets API
   const fetchData = async () => {
@@ -82,9 +85,9 @@ export default function HomePage() {
       setShowPopup(false);
       setMessage(""); // Clear message after closing modal
     }, 5000);
-  } catch (error) {
-    console.error("Error", error);
-    setError("Failed to submit content. Please try again.");
+  } catch (e) {
+    console.error("Error", e);
+    setError("Failed to submit content. Please try again later.");
     
     setTimeout(() => {
       setError("");
@@ -140,6 +143,13 @@ export default function HomePage() {
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-[#112D4E] p-6 rounded-xl shadow-lg w-[90%] max-w-md">
             <h2 className="text-2xl font-bold text-white mb-4">Submit Your Content</h2>
+
+            {/* Error message block */}
+            {error && (
+              <div className="text-red-400 text-center font-semibold mb-2">
+                {error}
+              </div>
+            )}
 
             {message ? (
               <div className="text-green-400 text-center font-semibold">
