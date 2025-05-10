@@ -11,7 +11,7 @@ export default function HomePage() {
   const [content, setContent] = useState("");
   const [title, setTitle] = useState("");
   const [message, setMessage] = useState("");
-  const [error, setError] = useState("");
+  const [setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [body, setBody] = useState([]);
   const [header, setHeader] = useState([]);
