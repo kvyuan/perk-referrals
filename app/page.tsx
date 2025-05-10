@@ -18,7 +18,7 @@ export default function HomePage() {
   const [selectedContent, setSelectedContent] = useState(null); // Track selected content
   const [selectedTitle, setSelectedTitle] = useState(null);
   const [selectedCategories, setSelectedCategories] = useState([]); // Track selected categories
-  const [categories, setCategories] = useState([]); // Track available categories
+  const [categories, setCategories] = useState<string[]>([]); // Track available categories
 
   type Row = {
   category: string;
