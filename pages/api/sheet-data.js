@@ -3,7 +3,7 @@ import { google } from 'googleapis';
 export default async function handler(req, res) {
   try {
     const key = process.env.PRIVATE_KEY?.replace(/"/g, '')
-    //console.log(key)
+    console.log(key)
     const auth = new google.auth.GoogleAuth({
       //keyFile: '.credentials/smooth-league-454604-d1-5fb85804352b.json', // Set your key file path here
       credentials: {
