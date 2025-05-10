@@ -22,6 +22,8 @@ export default function HomePage() {
 
   type Row = {
   category: string;
+  title: string;
+  content: string;
   // Add other fields as needed, like: id: number; name: string;
   };
 
