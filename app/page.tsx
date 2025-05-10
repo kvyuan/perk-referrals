@@ -10,6 +10,7 @@ export default function HomePage() {
     category: string;
     title: string;
     content: string;
+    [key: string]: string;
     // Add other fields as needed, like: id: number; name: string;
   };
 
