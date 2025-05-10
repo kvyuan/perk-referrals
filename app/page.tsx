@@ -1,98 +1,293 @@
-'use client'
+"use client";
 
-import { useState } from 'react';
-//import Link from 'next/link';
-import axios from 'axios';
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import axios from "axios";
 
-export default function Page() {
-  const [showForm, setShowForm] = useState(false);
-  const [showExplanation, setShowExplanation] = useState(false); // New state for toggling explanation
-  const [email, setEmail] = useState('');
-  const [message, setMessage] = useState('');
+export default function HomePage() {
+  const [showPopup, setShowPopup] = useState(false);
+  const [email, setEmail] = useState("");
+  const [category, setCategory] = useState("");
+  const [content, setContent] = useState("");
+  const [title, setTitle] = useState("");
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [body, setBody] = useState([]);
+  const [header, setHeader] = useState([]);
+  const [selectedContent, setSelectedContent] = useState(null); // Track selected content
+  const [selectedTitle, setSelectedTitle] = useState(null);
+  const [selectedCategories, setSelectedCategories] = useState([]); // Track selected categories
+  const [categories, setCategories] = useState([]); // Track available categories
 
-  // Handle email submission
-  const handleEmailSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
+  // Fetch data from Google Sheets API
+  const fetchData = async () => {
     try {
-      // POST the email to Google Apps Script Web App URL
-      const response = await axios.post('/api/submit-email', { email });
+      const response = await axios.get('/api/sheet-data');
+      setHeader(response.data.header); // Assuming header comes in response.data.header
+      setBody(response.data.body); // Assuming data comes in response.data.body
 
-      // Handle success
-      setMessage('Email submitted successfully!');
-      console.log(response)
-      setEmail('');  // Clear the email input field
+      // Extract unique categories from the data
+      const uniqueCategories = [
+        ...new Set(response.data.body.map((row) => row.category))
+      ];
+      setCategories(uniqueCategories);
     } catch (error) {
-      const errorMessage = error.response?.data?.message || 'An unexpected error occurred.';
-      setMessage(errorMessage);
-      console.error('Submission error:', errorMessage);
+      console.error("Error fetching data", error);
     }
   };
 
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-[#0A2342] p-6">
-      <div className="max-w-2xl text-center bg-[#112D4E] p-10 rounded-2xl shadow-lg text-white border border-gray-700">
-        <h1 className="text-4xl font-bold text-[#F2F2F2] mb-4">Perk Referrals: Share Your Experience & Get Rewarded!</h1>
-        <p className="text-lg text-gray-300 mb-6">
-          Have you recently hired a vendor or service professional? Join our forum and share your review to earn exclusive rewards!
-        </p>
-        <p className="text-lg text-gray-300 mb-6">
-          Are you in search of a vendor or service professional? Join our forum and find trusted professionals recommended by peers!
-        </p>
-        <div className="flex justify-center gap-4">
-          <button 
-            onClick={() => setShowForm(true)} 
-            className="bg-[#E31837] text-white px-6 py-3 rounded-lg text-lg font-semibold shadow-md hover:bg-[#B81B29] transition"
-          >
-            Yes, I am Interested
-          </button>
-          <button 
-            onClick={() => setShowExplanation(!showExplanation)} // Toggle the explanation visibility
-            className="bg-[#6C757D] text-white px-6 py-3 rounded-lg text-lg font-semibold shadow-md hover:bg-[#5A6268] transition"
-          >
-            Tell Me More
-          </button>
-        </div>
-        
-        {showForm && (
-          <div className="mt-6 p-4 bg-[#0A2342] rounded-lg border border-gray-600">
-            <p className="text-lg text-gray-300 mb-2">Enter your email to receive Beta release announcement:</p>
-            <form onSubmit={handleEmailSubmit}>
-              <input 
-                type="email" 
-                placeholder="Your Email" 
-                className="w-full p-2 rounded-lg text-white mb-2"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-              <button 
-                type="submit"
-                className="w-full bg-[#E31837] text-white px-4 py-2 rounded-lg shadow-md hover:bg-[#B81B29] transition"
-              >
-                Submit
-              </button>
-            </form>
-            {message && <p className="mt-4 text-lg text-gray-300">{message}</p>}
-          </div>
-        )}
+  // Fetch data on component mount
+  useEffect(() => {
+    fetchData();
+  }, []);
 
-        {/* Explanation text box */}
-        {showExplanation && (
-          <div className="mt-6 p-4 bg-[#0A2342] rounded-lg border border-gray-600">
-            <h3 className="text-2xl font-semibold text-[#F2F2F2] mb-4">How It Works:</h3>
-            <p className="text-lg text-gray-300">
-              Finding a reliable local vendor or service provider should be easy! You can find trusted professionals including home services, mortgage brokers, financial planners, etc. through our forum, based on reviews and recommendations 
-              from other users. If you have a professional you trust, you will ll earn rewards by sharing here. 
-               Perk Referrals is a community-driven platform aimed at connecting you with the best professionals.
-            </p>
-            <p className="text-lg text-gray-300">
-              Each month, your profile score will be calculated by the popularity and quality of the recommendations you make. 
-              Your score will then be compared with your peers, determining your share of the reward pool!
-            </p>
+  // Handle row click to display content details
+  const handleRowClick = (row) => {
+    setSelectedContent(row.content);
+    setSelectedTitle(row.title); // Store the content and title for the selected row
+  };
+
+  // Handle content submission
+  const handleContentSubmit = async (event) => {
+  event.preventDefault();
+  setMessage("");
+  setError("");
+  setIsSubmitting(true);
+
+  try {
+    await axios.post("/api/send-submission", { email, category, title, content });
+
+    setMessage("Your content has been submitted successfully. Site admin will review and publish soon! (pop-up closing in 5 seconds)");
+    
+    // Clear form fields
+    setEmail("");
+    setCategory("");
+    setTitle("");  
+    setContent("");
+
+    // Keep the modal open for 5 seconds, then close it
+    setTimeout(() => {
+      setShowPopup(false);
+      setMessage(""); // Clear message after closing modal
+    }, 5000);
+  } catch (error) {
+    setError("Failed to submit content. Please try again.");
+    
+    setTimeout(() => {
+      setError("");
+    }, 5000);
+  } finally {
+    setIsSubmitting(false);
+  }
+};
+
+  // Filter the data based on selected categories
+  const filteredBody = body.filter((row) =>
+    selectedCategories.length === 0 || selectedCategories.includes(row.category)
+  );
+
+  // Handle category checkbox changes
+  const handleCategoryChange = (event) => {
+    const category = event.target.value;
+    setSelectedCategories((prevSelected) =>
+      prevSelected.includes(category)
+        ? prevSelected.filter((cat) => cat !== category) // Remove if already selected
+        : [...prevSelected, category] // Add if not selected
+    );
+  };
+
+  return (
+    <div className="flex flex-col min-h-screen bg-[#0A2342] text-white">
+      {/* Navigation Bar */}
+      <nav className="bg-[#112D4E] p-4 shadow-md">
+        <div className="container mx-auto flex justify-between items-center">
+          <h1 className="text-2xl font-bold text-[#F2F2F2]">Perk Referrals</h1>
+          <div className="space-x-6">
+            <Link href="/" className="text-lg hover:text-gray-300 transition">
+              Home
+            </Link>
+            <Link href="/about" className="text-lg hover:text-gray-300 transition">
+              About
+            </Link>
+            <Link href="/contact" className="text-lg hover:text-gray-300 transition">
+              Contact Us
+            </Link>
+            <button
+              onClick={() => setShowPopup(true)}
+              className="bg-[#E31837] px-4 py-2 rounded-lg text-lg font-semibold shadow-md hover:bg-[#B81B29] transition"
+            >
+              POST CONTENT
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      {/* Modal Pop-up */}
+      {showPopup && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-[#112D4E] p-6 rounded-xl shadow-lg w-[90%] max-w-md">
+            <h2 className="text-2xl font-bold text-white mb-4">Submit Your Content</h2>
+
+            {message ? (
+              <div className="text-green-400 text-center font-semibold">
+                {message}
+              </div>
+            ) : (
+              <form onSubmit={handleContentSubmit} className="space-y-4">
+                <input
+                  type="email"
+                  placeholder="Your Email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  disabled={isSubmitting}
+                  className="w-full p-3 rounded-lg bg-gray-800 text-white focus:outline-none disabled:opacity-50"
+                />
+
+                {/* Category Dropdown */}
+                <select
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                  required
+                  disabled={isSubmitting}
+                  className="w-full p-3 rounded-lg bg-gray-800 text-white focus:outline-none disabled:opacity-50"
+                >
+                  <option value="" disabled>Select a category</option>
+                  {[...categories, "Other, specify in the title"].sort().map((cat, index) => (
+                    <option key={index} value={cat}>
+                      {cat}
+                    </option>
+                  ))}
+                </select>
+
+                <input
+                  type="text"
+                  placeholder="Title"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  required
+                  disabled={isSubmitting}
+                  className="w-full p-3 rounded-lg bg-gray-800 text-white focus:outline-none disabled:opacity-50"
+                />
+
+                <textarea
+                  placeholder="Content"
+                  value={content}
+                  onChange={(e) => setContent(e.target.value)}
+                  required
+                  disabled={isSubmitting}
+                  className="w-full p-3 h-32 rounded-lg bg-gray-800 text-white focus:outline-none disabled:opacity-50"
+                ></textarea>
+
+                <div className="flex justify-between">
+                  <button
+                    type="button"
+                    onClick={() => setShowPopup(false)}
+                    className="bg-gray-500 px-4 py-2 rounded-lg text-white hover:bg-gray-700"
+                  >
+                    Cancel
+                  </button>
+
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="bg-[#E31837] px-4 py-2 rounded-lg text-white hover:bg-[#B81B29] disabled:opacity-50"
+                  >
+                    {isSubmitting ? "Submitting..." : "Submit"}
+                  </button>
+                </div>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
+
+
+      {/* Hero Section */}
+      <header className="flex flex-col items-center text-center py-16 px-6">
+        <h2 className="text-5xl font-bold text-[#F2F2F2] mb-4">Welcome to Perk Referrals Community!</h2>
+        <p className="text-lg text-gray-300 max-w-3xl">
+          A community-powered forum for the Greater Toronto Area where locals share trusted vendors, flag bad experiences, and help each other make informed choices.
+          Contribute and earn up to 80% of the revenue generated from your referrals and insights.
+        </p>
+      </header>
+
+      {/* Category Filter Section */}
+      <section className="container mx-auto px-6 py-6">
+        <h3 className="text-xl font-semibold text-[#F2F2F2] mb-4">Filter by Category</h3>
+        <div className="space-x-4">
+          {categories.map((category, index) => (
+            <label key={index} className="text-lg text-gray-300 mr-4">
+              <input
+                type="checkbox"
+                value={category}
+                onChange={handleCategoryChange}
+                checked={selectedCategories.includes(category)}
+                className="mr-2"
+              />
+              {category}
+            </label>
+          ))}
+        </div>
+      </section>
+
+      {/* Data Table Section */}
+      <section className="container mx-auto px-6 py-10">
+        <h3 className="text-2xl font-semibold text-[#F2F2F2] mb-4">Submitted Content</h3>
+
+        <div className="overflow-x-auto bg-[#112D4E] shadow-lg rounded-xl">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="bg-[#1B3A57] text-[#F2F2F2] uppercase text-sm font-semibold">
+                {header.map((column, index) =>
+                  column !== 'Content' && (
+                    <th key={index} className="px-6 py-4 border-b border-gray-600">
+                      {column}
+                    </th>
+                  )
+                )}
+              </tr>
+            </thead>
+
+            <tbody>
+              {filteredBody.map((row, index) => (
+                <tr
+                  key={index}
+                  onClick={() => handleRowClick(row)}
+                  className="cursor-pointer transition hover:bg-[#1B3A57] even:bg-[#0F2A47]"
+                >
+                  {Object.keys(row).map(
+                    (key, i) =>
+                      key !== 'content' && (
+                        <td key={i} className="px-6 py-4 border-b border-gray-700 text-gray-300">
+                          {row[key]}
+                        </td>
+                      )
+                  )}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Display selected content */}
+        {selectedContent && (
+          <div className="mt-6 bg-[#1B3A57] p-6 rounded-xl shadow-md border border-gray-700">
+            <h3 className="text-2xl font-semibold text-[#F2F2F2]">{selectedTitle}</h3>
+            <p className="text-lg text-gray-300 mt-2">{selectedContent}</p>
+            <button onClick={() => setSelectedContent(null)} className="mt-4 bg-red-500 px-4 py-2 rounded-lg">
+              Close
+            </button>
           </div>
         )}
-      </div>
+      </section>
+
+
+      {/* Footer */}
+      <footer className="bg-[#112D4E] text-center py-6 mt-auto">
+        <p className="text-gray-400">&copy; {new Date().getFullYear()} Perk Referrals. All rights reserved.</p>
+      </footer>
     </div>
   );
 }
