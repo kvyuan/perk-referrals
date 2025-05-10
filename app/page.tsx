@@ -5,14 +5,15 @@ import Link from "next/link";
 import axios from "axios";
 
 export default function HomePage() {
-  const [showPopup, setShowPopup] = useState(false);
-  const [email, setEmail] = useState("");
-  const [category, setCategory] = useState("");
-  const [content, setContent] = useState("");
-  const [title, setTitle] = useState("");
-  const [message, setMessage] = useState("");
-  const [setError] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [email, setEmail] = useState<string>("");
+  const [category, setCategory] = useState<string>("");
+  const [title, setTitle] = useState<string>("");
+  const [content, setContent] = useState<string>("");
+  const [message, setMessage] = useState<string>("");
+  const [error, setError] = useState<string>("");
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [showPopup, setShowPopup] = useState<boolean>(false);
+  
   const [body, setBody] = useState<Row[]>([]);
   const [header, setHeader] = useState([]);
   const [selectedContent, setSelectedContent] = useState<string | null>(null); 
@@ -59,7 +60,7 @@ export default function HomePage() {
   };
 
   // Handle content submission
-  const handleContentSubmit = async (event) => {
+  const handleContentSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
   event.preventDefault();
   setMessage("");
   setError("");
