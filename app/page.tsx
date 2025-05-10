@@ -208,8 +208,8 @@ export default function HomePage() {
       <header className="flex flex-col items-center text-center py-16 px-6">
         <h2 className="text-5xl font-bold text-[#F2F2F2] mb-4">Welcome to Perk Referrals Community!</h2>
         <p className="text-lg text-gray-300 max-w-3xl">
-          A community-driven forum where members share recommendations and experiences with trusted vendors and service professionals.
-          Earn rewards for your contributions and discover highly-rated professionals recommended by peers.
+          A community-powered forum for the Greater Toronto Area where locals share trusted vendors, flag bad experiences, and help each other make informed choices.
+          Contribute and earn up to 80% of the revenue generated from your referrals and insights.
         </p>
       </header>
 
