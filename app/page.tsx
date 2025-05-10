@@ -13,7 +13,7 @@ export default function HomePage() {
   const [message, setMessage] = useState("");
   const [setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [body, setBody] = useState([]);
+  const [body, setBody] = useState<Row[]>([]);
   const [header, setHeader] = useState([]);
   const [selectedContent, setSelectedContent] = useState(null); // Track selected content
   const [selectedTitle, setSelectedTitle] = useState(null);
