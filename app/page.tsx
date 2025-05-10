@@ -51,7 +51,7 @@ export default function HomePage() {
   }, []);
 
   // Handle row click to display content details
-  const handleRowClick = (row) => {
+  const handleRowClick = (row: Row) => {
     setSelectedContent(row.content);
     setSelectedTitle(row.title); // Store the content and title for the selected row
   };
@@ -92,7 +92,7 @@ export default function HomePage() {
 };
 
   // Filter the data based on selected categories
-  const filteredBody = body.filter((row) =>
+  const filteredBody = body.filter((row: Row) =>
     selectedCategories.length === 0 || selectedCategories.includes(row.category)
   );
 
