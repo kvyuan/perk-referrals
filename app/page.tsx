@@ -120,15 +120,6 @@ export default function HomePage() {
         <div className="container mx-auto flex justify-between items-center">
           <h1 className="text-2xl font-bold text-[#F2F2F2]">Perk Referrals</h1>
           <div className="space-x-6">
-            <Link href="/" className="text-lg hover:text-gray-300 transition">
-              Home
-            </Link>
-            <Link href="/about" className="text-lg hover:text-gray-300 transition">
-              About
-            </Link>
-            <Link href="/contact" className="text-lg hover:text-gray-300 transition">
-              Contact Us
-            </Link>
             <button
               onClick={() => setShowPopup(true)}
               className="bg-[#E31837] px-4 py-2 rounded-lg text-lg font-semibold shadow-md hover:bg-[#B81B29] transition"
@@ -232,7 +223,8 @@ export default function HomePage() {
         <h2 className="text-5xl font-bold text-[#F2F2F2] mb-4">Welcome to Perk Referrals Community!</h2>
         <p className="text-lg text-gray-300 max-w-3xl">
           A community-powered forum for the Greater Toronto Area where locals share trusted vendors, flag bad experiences, and help each other make informed choices.
-          Contribute and earn up to 80% of the revenue generated from your referrals and insights.
+          Contribute and earn up to 80% of the revenue generated from your referrals and insights. 
+          Please provide an email address you wish to receive further communication and Interac e-Transfer payout. A random username will be assigned for you to stay anonymous. 
         </p>
       </header>
 
