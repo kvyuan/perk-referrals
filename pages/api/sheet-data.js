@@ -2,7 +2,7 @@ import { google } from 'googleapis';
 
 export default async function handler(req, res) {
   try {
-    const key_backup = process.env.PRIVATE_KEY?.replace(/"/g, '')
+    //const key_backup = process.env.PRIVATE_KEY?.replace(/"/g, '')
     const key = process.env.PRIVATE_KEY?.replace(/\\\n/g, '\n');
     console.log(JSON.stringify(process.env.PRIVATE_KEY));
     console.log('---');
