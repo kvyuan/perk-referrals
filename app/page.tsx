@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 //import Link from "next/link";
 import axios from "axios";
 
@@ -267,35 +267,44 @@ export default function HomePage() {
 
             <tbody>
               {filteredBody.map((row, index) => (
-                <tr
-                  key={index}
-                  onClick={() => handleRowClick(row)}
-                  className="cursor-pointer transition hover:bg-[#1B3A57] even:bg-[#0F2A47]"
-                >
-                  {Object.keys(row).map(
-                    (key, i) =>
-                      key !== 'content' && (
-                        <td key={i} className="px-6 py-4 border-b border-gray-700 text-gray-300">
-                          {row[key]}
-                        </td>
-                      )
+                <React.Fragment key={index}>
+                  <tr
+                    onClick={() => handleRowClick(row)}
+                    className={`cursor-pointer transition hover:bg-[#1B3A57] even:bg-[#0F2A47] ${
+                      selectedTitle === row.title ? "bg-[#1B3A57]" : ""
+                    }`}
+                  >
+                    {Object.keys(row).map(
+                      (key, i) =>
+                        key !== "content" && (
+                          <td key={i} className="px-6 py-4 border-b border-gray-700 text-gray-300">
+                            {row[key]}
+                          </td>
+                        )
+                    )}
+                  </tr>
+
+                  {/* Inline expandable row for content display */}
+                  {selectedTitle === row.title && (
+                    <tr className="bg-[#1B3A57] text-gray-300">
+                      <td colSpan={header.length} className="px-6 py-4 border-b border-gray-700">
+                        <div className="flex justify-between items-start">
+                          <p className="whitespace-pre-wrap">{selectedContent}</p>
+                          <button
+                            onClick={() => {setSelectedContent(null);setSelectedTitle(null);}}
+                            className="ml-4 bg-red-500 px-3 py-1 rounded-lg text-sm hover:bg-red-600"
+                          >
+                            Close
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
                   )}
-                </tr>
+                </React.Fragment>
               ))}
             </tbody>
           </table>
         </div>
-
-        {/* Display selected content */}
-        {selectedContent && (
-          <div className="mt-6 bg-[#1B3A57] p-6 rounded-xl shadow-md border border-gray-700">
-            <h3 className="text-2xl font-semibold text-[#F2F2F2]">{selectedTitle}</h3>
-            <p className="text-lg text-gray-300 mt-2">{selectedContent}</p>
-            <button onClick={() => setSelectedContent(null)} className="mt-4 bg-red-500 px-4 py-2 rounded-lg">
-              Close
-            </button>
-          </div>
-        )}
       </section>
 
 
