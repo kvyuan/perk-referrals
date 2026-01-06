@@ -223,8 +223,8 @@ export default function HomePage() {
         <h2 className="text-5xl font-bold text-[#F2F2F2] mb-4">Welcome to Perk Referrals Community!</h2>
         <p className="text-lg text-gray-300 max-w-3xl">
           A community-powered forum for the Greater Toronto Area where locals share trusted vendors, flag bad experiences, and help each other make informed choices.
-          Contribute and earn up to 80% of the revenue generated from your referrals and insights. 
-          Please provide an email address you wish to receive further communication and Interac e-Transfer payout. A random username will be assigned for you to stay anonymous. 
+          Contribute and earn up to 80% of the ads revenue generated from your referrals and insights. 
+          Please provide an email address you wish to receive further communication and Interac e-Transfer payout once the earning reaches $5. A random username will be assigned for you to stay anonymous. 
         </p>
       </header>
 
